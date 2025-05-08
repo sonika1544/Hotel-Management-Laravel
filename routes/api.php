@@ -17,3 +17,18 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+// Facility Routes
+Route::middleware(['auth:sanctum'])->group(function () {
+    // Public routes (no role required)
+    Route::get('/facilities', [App\Http\Controllers\Api\FacilityController::class, 'index']);
+    Route::get('/facilities/category/{category}', [App\Http\Controllers\Api\FacilityController::class, 'getByCategory']);
+    Route::get('/facilities/{id}', [App\Http\Controllers\Api\FacilityController::class, 'show']);
+
+    // Protected routes (Admin and Manager only)
+    Route::middleware(['api.role:Admin,Manager'])->group(function () {
+        Route::post('/facilities', [App\Http\Controllers\Api\FacilityController::class, 'store']);
+        Route::put('/facilities/{id}', [App\Http\Controllers\Api\FacilityController::class, 'update']);
+        Route::delete('/facilities/{id}', [App\Http\Controllers\Api\FacilityController::class, 'destroy']);
+    });
+});
